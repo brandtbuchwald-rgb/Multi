@@ -95,7 +95,7 @@ function currentState(includeEquipRune=true){
 // Optimizer with Quicken restriction (≤ Lv.2)
 function planCombos(){
   const s = currentState(false);
-  const chosen   = els.optSet.value;
+  const chosen   = els.optSet.value.trim();
   const pieceVal = SET_VAL[chosen];
   if(!pieceVal) return [];
 
@@ -104,8 +104,10 @@ function planCombos(){
   const need = Math.max(0, requiredTotal0 - s.buffsBase);
 
   const pets = [
-    {name:'S',v:0.12},{name:'A',v:0.09},
-    {name:'B',v:0.06},{name:'None',v:0.00}
+    {name:'S',v:0.12},
+    {name:'A',v:0.09},
+    {name:'B',v:0.06},
+    {name:'None',v:0.00}
   ];
   const results = [];
 
@@ -120,9 +122,15 @@ function planCombos(){
           if(coverage + 1e-9 >= need){
             const waste = coverage - need;
             results.push({
-              set:chosen, quickLevel:qLevel, pieces,
-              equipPct, rune:Math.round(rFix*100),
-              pet:pet.name, petV:pet.v, total:coverage, waste
+              set:chosen,
+              quickLevel:qLevel,
+              pieces,
+              equipPct,
+              rune:Math.round(rFix*100),
+              pet:pet.name,
+              petV:pet.v,
+              total:coverage,
+              waste
             });
             break;
           }
@@ -131,7 +139,14 @@ function planCombos(){
     }
   }
 
-  results.sort((a,b)=>(a.pieces-b.pieces)||(a.quickLevel-b.quickLevel)||(b.rune-a.rune)||(b.petV-a.petV)||(a.waste-b.waste));
+  // sort + dedupe
+  results.sort((a,b)=>
+    (a.pieces-b.pieces) ||
+    (a.quickLevel-b.quickLevel) ||
+    (b.rune-a.rune) ||
+    (b.petV-a.petV) ||
+    (a.waste-b.waste)
+  );
   const uniq=[], seen=new Set();
   for(const r of results){
     const k = `${r.set}|${r.quickLevel}|${r.pieces}|${r.rune}|${r.pet}`;
