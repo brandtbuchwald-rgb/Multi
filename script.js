@@ -92,7 +92,7 @@ function currentState(includeEquipRune=true){
           buffsBase,buffsAll,requiredTotal,requiredRemaining,finalSpd};
 }
 
-// Optimizer with Quicken restriction (≤ Lv.2)
+// Optimizer
 function planCombos(){
   const s = currentState(false);
   const chosen   = els.optSet.value.trim();
@@ -104,10 +104,8 @@ function planCombos(){
   const need = Math.max(0, requiredTotal0 - s.buffsBase);
 
   const pets = [
-    {name:'S',v:0.12},
-    {name:'A',v:0.09},
-    {name:'B',v:0.06},
-    {name:'None',v:0.00}
+    {name:'S',v:0.12},{name:'A',v:0.09},
+    {name:'B',v:0.06},{name:'None',v:0.00}
   ];
   const results = [];
 
@@ -122,15 +120,9 @@ function planCombos(){
           if(coverage + 1e-9 >= need){
             const waste = coverage - need;
             results.push({
-              set:chosen,
-              quickLevel:qLevel,
-              pieces,
-              equipPct,
-              rune:Math.round(rFix*100),
-              pet:pet.name,
-              petV:pet.v,
-              total:coverage,
-              waste
+              set:chosen, quickLevel:qLevel, pieces,
+              equipPct, rune:Math.round(rFix*100),
+              pet:pet.name, petV:pet.v, total:coverage, waste
             });
             break;
           }
@@ -161,6 +153,7 @@ const lineOf = r =>
 
 let lastBest = null;
 
+// Recalculate + update UI
 function recalc(){
   applyTheme();
 
@@ -209,6 +202,42 @@ function recalc(){
     els.altList.innerHTML     = '';
   }
 }
+
+// Apply best combo
+function applyOptimal(){
+  if(!lastBest){ alert('No optimal combo found yet.'); return; }
+
+  els.equip.value = (lastBest.equipPct * 100).toFixed(2);
+  els.rune.value  = String(lastBest.rune);
+
+  const petMap = { None:0, B:6, A:9, S:12 };
+  els.pet.value = String(petMap[lastBest.pet] || 0);
+
+  els.quicken.value = String(lastBest.quickLevel);
+  recalc();
+}
+els.applyBest?.addEventListener('click', applyOptimal);
+
+// Input focus helpers
+function isEditableNumber(el){ 
+  return el.tagName==='INPUT' && el.type==='number' && !el.readOnly; 
+}
+document.addEventListener('focusin', e=>{
+  const el = e.target; if(!isEditableNumber(el)) return;
+  const v = (el.value||'').trim();
+  if(v==='' || Number(v)===0) el.value='';
+  el.select();
+});
+document.addEventListener('focusout', e=>{
+  const el = e.target; if(!isEditableNumber(el)) return;
+  if((el.value||'').trim()===''){ el.value='0'; recalc(); }
+});
+['input','change','click'].forEach(evt=>{
+  document.addEventListener(evt, e=>{
+    if(e.target.matches('input, select, button')) recalc();
+  });
+});
+
 // Initial calc
 document.addEventListener('DOMContentLoaded', ()=>{
   initDefaults();
