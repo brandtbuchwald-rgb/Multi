@@ -1,0 +1,155 @@
+/* === Base === */
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #111;
+  color: #eee;
+  line-height: 1.5;
+}
+h1, h2 {
+  font-family: 'Cinzel', serif;
+  margin: 0 0 12px 0;
+  font-weight: 700;
+}
+h1 small {
+  font-size: 0.6em;
+  font-weight: 400;
+  opacity: 0.7;
+}
+header {
+  padding: 12px 16px;
+  background: #222;
+  border-bottom: 2px solid #333;
+}
+main {
+  padding: 16px;
+  max-width: 600px;
+  margin: auto;
+}
+footer {
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  opacity: 0.7;
+}
+
+/* === Cards === */
+.card {
+  background: #1b1b1b;
+  border: 2px solid #333;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+.card .inner {
+  padding: 16px;
+}
+.section {
+  display: grid;
+  gap: 10px;
+}
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+label {
+  font-weight: 600;
+}
+
+/* === Segmented buttons === */
+.seg {
+  display: flex;
+  gap: 6px;
+}
+.seg button {
+  flex: 1;
+  padding: 6px 10px;
+  border: 1px solid #444;
+  background: #2a2a2a;
+  color: #eee;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.seg button.is-active {
+  background: #555;
+  border-color: #888;
+}
+
+/* === Selects & Inputs === */
+select, input[type="number"] {
+  background: #111;
+  color: #eee;
+  border: 1px solid #444;
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 14px;
+}
+input[readonly] {
+  background: #222;
+  border-color: #333;
+}
+
+/* === Progress bar === */
+.bar {
+  background: #222;
+  border: 1px solid #444;
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+#progressFill {
+  height: 100%;
+  width: 0;
+  background: #3a8;
+  transition: width 0.3s ease;
+}
+#pbar.good #progressFill { background: #3a8; }
+#pbar.warn #progressFill { background: #e90; }
+#pbar.hit  #progressFill { background: #5c5; }
+.muted {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+
+/* === Stats display === */
+.stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+.stat label {
+  display: block;
+  font-size: 13px;
+  opacity: 0.8;
+}
+.value {
+  display: flex;
+  align-items: center;
+}
+.value input {
+  flex: 1;
+  text-align: right;
+}
+.value .suffix {
+  margin-left: 4px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* === Buttons === */
+button.btn {
+  background: #444;
+  border: 1px solid #666;
+  color: #eee;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+}
+button.btn:hover {
+  background: #666;
+}
