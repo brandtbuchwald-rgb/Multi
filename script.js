@@ -75,7 +75,7 @@ function currentState(includeEquipRune=true){
   const equip  = includeEquipRune ? pctInput('equip') : 0;
   const rune   = includeEquipRune ? pctInput('rune')  : 0;
   const petPct = pctSelect('pet');
-  const quick  = pctSelect('quicken'); // values 0..5 → 0..0.05
+  const quick  = pctSelect('quicken'); // values q0..q5 → 0..0.05
   const fury   = (els.fury.checked && cls === 'Berserker') ? 1.25 : 1.0;
 
   const buffsBase = char + color + guild + secret;
@@ -155,8 +155,6 @@ let lastBest = null;
 
 // Recalculate + update UI
 function recalc(){
-  applyTheme();
-
   const s = currentState(true);
 
   if (s.cls === 'Berserker'){ 
@@ -203,17 +201,20 @@ function recalc(){
   }
 }
 
-// Apply best combo
+// Apply best combo (patched for i18n select values)
 function applyOptimal(){
   if(!lastBest){ alert('No optimal combo found yet.'); return; }
 
   els.equip.value = (lastBest.equipPct * 100).toFixed(2);
   els.rune.value  = String(lastBest.rune);
 
-  const petMap = { None:0, B:6, A:9, S:12 };
-  els.pet.value = String(petMap[lastBest.pet] || 0);
+  // Map optimizer pet → select option keys
+  const petKeyMap = { None:"petNone", B:"petB", A:"petA", S:"petS" };
+  els.pet.value = petKeyMap[lastBest.pet] || "petNone";
 
-  els.quicken.value = String(lastBest.quickLevel);
+  // Map quickLevel → select option key
+  els.quicken.value = lastBest.quickLevel === 0 ? "qNone" : "q" + lastBest.quickLevel;
+
   recalc();
 }
 els.applyBest?.addEventListener('click', applyOptimal);
