@@ -162,14 +162,21 @@ const lineOf = r =>
 let lastBest = null;
 
 function recalc(){
+  applyTheme();
+
   const s = currentState(true);
 
-  if (s.cls === 'Berserker'){ furyRow?.classList.remove('hidden'); }
-  else {
+  if (s.cls === 'Berserker'){ 
+    furyRow?.classList.remove('hidden'); 
+  } else {
     furyRow?.classList.add('hidden');
     els.fury.checked = false;
     const b = document.getElementById('furyBtn');
-    if(b){ b.setAttribute('data-on','0'); b.classList.remove('is-active'); b.textContent='Off'; }
+    if(b){ 
+      b.setAttribute('data-on','0'); 
+      b.classList.remove('is-active'); 
+      b.textContent='Off'; 
+    }
   }
 
   const progress = s.requiredTotal <= 0 ? 1 : clamp((s.buffsAll)/s.requiredTotal, 0, 1);
@@ -180,7 +187,8 @@ function recalc(){
   if(progress >= 1){ pbar.classList.add('good','hit'); }
   else if(progress >= 0.9){ pbar.classList.add('warn'); }
 
-  document.getElementById('progressText').textContent = `Progress: ${(progress*100).toFixed(1)}% of required covered`;
+  document.getElementById('progressText').textContent = 
+    `Progress: ${(progress*100).toFixed(1)}% of required covered`;
   els.requiredBox.value = (s.requiredRemaining*100).toFixed(2);
   els.finalBox.value    = s.finalSpd.toFixed(2);
 
@@ -191,7 +199,9 @@ function recalc(){
     lastBest = plans[0];
     els.bestLine.textContent  = lineOf(lastBest) + `  → covers ${(lastBest.total*100).toFixed(2)}%`;
     els.bestWaste.textContent = `Waste overlap: ${(lastBest.waste*100).toFixed(2)}%`;
-    els.altList.innerHTML     = plans.slice(1,3).map(r=>`<li>${lineOf(r)} — waste ${(r.waste*100).toFixed(2)}%</li>`).join('');
+    els.altList.innerHTML     = plans.slice(1,3)
+      .map(r=>`<li>${lineOf(r)} — waste ${(r.waste*100).toFixed(2)}%</li>`)
+      .join('');
   } else {
     lastBest = null;
     els.bestLine.textContent  = 'No valid combo with Quicken ≤ Lv.2.';
@@ -199,39 +209,6 @@ function recalc(){
     els.altList.innerHTML     = '';
   }
 }
-
-function applyOptimal(){
-  if(!lastBest){ alert('No optimal combo found yet.'); return; }
-
-  els.equip.value = (lastBest.equipPct * 100).toFixed(2);
-  els.rune.value  = String(lastBest.rune);
-
-  const petMap = { None:0, B:6, A:9, S:12 };
-  els.pet.value = String(petMap[lastBest.pet] || 0);
-
-  els.quicken.value = String(lastBest.quickLevel);
-  recalc();
-}
-els.applyBest?.addEventListener('click', applyOptimal);
-
-// Input focus helpers
-function isEditableNumber(el){ return el.tagName==='INPUT' && el.type==='number' && !el.readOnly; }
-document.addEventListener('focusin', e=>{
-  const el = e.target; if(!isEditableNumber(el)) return;
-  const v = (el.value||'').trim();
-  if(v==='' || Number(v)===0) el.value='';
-  el.select();
-});
-document.addEventListener('focusout', e=>{
-  const el = e.target; if(!isEditableNumber(el)) return;
-  if((el.value||'').trim()===''){ el.value='0'; recalc(); }
-});
-['input','change','click'].forEach(evt=>{
-  document.addEventListener(evt, e=>{
-    if(e.target.matches('input, select, button')) recalc();
-  });
-});
-
 // Initial calc
 document.addEventListener('DOMContentLoaded', ()=>{
   initDefaults();
